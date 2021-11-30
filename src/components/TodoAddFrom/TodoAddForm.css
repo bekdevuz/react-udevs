@@ -1,0 +1,8 @@
+.todo-add-form {
+  display: flex;
+}
+
+.todo-add-form input {
+  width: 81%;
+  margin-right: 7px;
+}
