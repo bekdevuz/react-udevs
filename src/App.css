@@ -1,7 +1,7 @@
 @import "bootstrap/dist/css/bootstrap.min.css";
 .App {
   text-align: center;
-  width: 30%;
+  width: 35%;
   margin: 0 auto;
 }
 
@@ -11,4 +11,20 @@
 }
 h3 {
   color: #6c757d !important;
+}
+
+@media only screen and (max-width: 920px) {
+  .App {
+    text-align: center;
+    width: 50%;
+    margin: 0 auto;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .App {
+    text-align: center;
+    width: 80%;
+    margin: 0 auto;
+  }
 }
