@@ -1,4 +1,5 @@
 import { useState } from "react";
+import TodoList from "../TodoList/TodoList";
 import "./TodoAddForm.css";
 
 export default function TodoAddForm({ addTodo }) {
@@ -6,8 +7,12 @@ export default function TodoAddForm({ addTodo }) {
 
   function onSubmit(e) {
     e.preventDefault();
-    addTodo(todo);
-    setTodo("");
+    if (todo.length > 0) {
+      addTodo(todo);
+      setTodo("");
+    } else {
+      alert("Please type something first");
+    }
   }
   return (
     <form className="todo-add-form mt-3" onSubmit={onSubmit}>
