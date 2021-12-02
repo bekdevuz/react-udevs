@@ -5,7 +5,6 @@ import SearchPanel from "./components/SearchPanel/SearchPanel";
 import FilterPanel from "./components/FilterPanel/FilterPanel";
 import TodoAddForm from "./components/TodoAddFrom/TodoAddForm";
 import "./App.css";
-import { filter } from "dom-helpers";
 
 let maxId = 100;
 function createTodoItem(label) {
@@ -31,10 +30,15 @@ function App() {
   }
 
   function onToggleDone(todoId) {
-    const toggledTodo = todos.find((item) => item.id === todoId);
-    toggledTodo.done = !toggledTodo.done;
-    const newTodos = todos.filter((item) => item.id !== todoId);
-    setTodos([...newTodos, toggledTodo]);
+    const updatedTodos = todos.find((item) => item.id === todoId);
+    const indexTodos = todos.findIndex((item) => item.id === todoId);
+    updatedTodos.done = !updatedTodos.done;
+    const newTodos = [
+      ...todos.slice(0, indexTodos),
+      updatedTodos,
+      ...todos.slice(indexTodos + 1, todos.length),
+    ];
+    setTodos([...newTodos]);
   }
 
   function onDelete(todoId) {
@@ -44,14 +48,19 @@ function App() {
 
   function onImportant(todoId) {
     const importantTodo = todos.find((item) => item.id === todoId);
+    const indexTodos = todos.findIndex((item) => item.id === todoId);
     importantTodo.important = !importantTodo.important;
-    const newTodos = todos.filter((item) => item.id !== todoId);
-    setTodos([...newTodos, importantTodo]);
+    const newTodos = [
+      ...todos.slice(0, indexTodos),
+      importantTodo,
+      ...todos.slice(indexTodos + 1, todos.length),
+    ];
+    setTodos(newTodos);
   }
 
   //counters for AppHeader
-  const countAllTodo = todos.length;
   const countDone = todos.filter((el) => el.done).length;
+  const countAllTodo = todos.length - todos.filter((el) => el.done).length;
 
   return (
     <div className="row my-5">
