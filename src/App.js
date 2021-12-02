@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AppHeader from "./components/AppHeader/AppHeader";
 import TodoList from "./components/TodoList/TodoList";
 import SearchPanel from "./components/SearchPanel/SearchPanel";
@@ -23,12 +23,18 @@ const initialTodos = [
 ];
 
 function App() {
+  // useStates
   const [todos, setTodos] = useState(initialTodos);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterItems, setFilterItems] = useState("all");
+  const [visibleItems, setVisibleItems] = useState(todos);
+
+  //Add todos
   function addTodo(label) {
     const newTodo = createTodoItem(label);
     setTodos([...todos, newTodo]);
   }
-
+  //line throught done todos
   function onToggleDone(todoId) {
     const updatedTodos = todos.find((item) => item.id === todoId);
     const indexTodos = todos.findIndex((item) => item.id === todoId);
@@ -41,11 +47,13 @@ function App() {
     setTodos([...newTodos]);
   }
 
+  // delete todos button
   function onDelete(todoId) {
     const newTodos = todos.filter((item) => item.id !== todoId);
     setTodos(newTodos);
   }
 
+  //highliht important todos button
   function onImportant(todoId) {
     const importantTodo = todos.find((item) => item.id === todoId);
     const indexTodos = todos.findIndex((item) => item.id === todoId);
@@ -58,6 +66,43 @@ function App() {
     setTodos(newTodos);
   }
 
+  function onSearchChange(term) {
+    setSearchTerm(term);
+  }
+
+  function onFilterChange(filter) {
+    setFilterItems(filter);
+  }
+
+  useEffect(() => {
+    setVisibleItems(filter(search(todos, searchTerm, filterItems)));
+  }, [searchTerm, filterItems]);
+
+  useEffect(() => {
+    setVisibleItems(todos);
+  }, [todos]);
+
+  function search(items, term) {
+    if (term.length === 0) {
+      return items;
+    }
+    return items.filter((item) => {
+      return item.label.toLowerCase().indexOf(term.toLowerCase()) > -1;
+    });
+  }
+
+  function filter(items, filter) {
+    switch (filterItems) {
+      case "all":
+        return items;
+      case "active":
+        return items.filter((item) => !item.done);
+      case "done":
+        return items.filter((item) => item.done);
+      default:
+        return items;
+    }
+  }
   //counters for AppHeader
   const countDone = todos.filter((el) => el.done).length;
   const countAllTodo = todos.length - todos.filter((el) => el.done).length;
@@ -66,10 +111,10 @@ function App() {
     <div className="row my-5">
       <div className="App py-5 ">
         <AppHeader countAllTodo={countAllTodo} countDone={countDone} />
-        <SearchPanel />
-        <FilterPanel />
+        <SearchPanel onSearchChange={onSearchChange} />
+        <FilterPanel filter={filterItems} onFilterChange={onFilterChange} />
         <TodoList
-          todos={todos}
+          todos={visibleItems}
           onToggleDone={onToggleDone}
           onDelete={onDelete}
           onImportant={onImportant}
